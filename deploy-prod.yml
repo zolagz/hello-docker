@@ -1,0 +1,33 @@
+version: "3.7"
+
+services:
+  hello-docker:
+    image: REGISTRY/hello-docker
+    ports:
+      - 8000:8000
+    volumes:
+      - type: bind
+        source: ~/logs/hello-docker
+        target: /logs
+    networks:
+      - swarm-net
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      JVM_MEM_OPTS: -Xmx1g
+      JVM_GC_OPTS: -server -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70
+      JVM_GC_LOG_OPTS: -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintHeapAtGC -Xloggc:/logs/gc.log -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/logs
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "30"
+    deploy:
+      replicas: 2
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+
+networks:
+  swarm-net:
+    external: true
