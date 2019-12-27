@@ -1,5 +1,5 @@
 FROM openjdk:8-jdk-slim
-LABEL maintainer="zhangyaohui<yaohui.zhang@email.hypers.com>"
+LABEL maintainer="admin<admin@email.com>"
 COPY target/*.jar /app.jar
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
